@@ -52,14 +52,14 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Current user id is {peerId}</h1>
+      <h1>Current user id is Hello !!! {peerId}</h1>
       <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
       <button onClick={() => call(remotePeerIdValue)}>Call</button>
       <div>
-        <video ref={currentUserVideoRef} />
+        <video ref={currentUserVideoRef} autoplay playsinline/>
       </div>
       <div>
-        <video ref={remoteVideoRef} />
+        <video ref={remoteVideoRef} autoplay playsinline/>
       </div>
     </div>
   );
