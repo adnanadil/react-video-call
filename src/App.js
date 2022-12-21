@@ -16,8 +16,14 @@ function App() {
       setPeerId(id)
     });
 
+    // if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+    //   console.log("Let's get this party started")
+    // }else {
+      
+    // }
+
     peer.on('call', (call) => {
-      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.mediaDevices;
 
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
@@ -52,14 +58,14 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Current user id is Hello !!! {peerId}</h1>
+      <h1>Current user id is: {peerId}</h1>
       <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
       <button onClick={() => call(remotePeerIdValue)}>Call</button>
       <div>
-        <video ref={currentUserVideoRef} autoplay playsinline/>
+        <video ref={currentUserVideoRef} playsInline/>
       </div>
       <div>
-        <video ref={remoteVideoRef} autoplay playsinline/>
+        <video ref={remoteVideoRef} playsInline/>
       </div>
     </div>
   );
