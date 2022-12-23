@@ -44,14 +44,14 @@
   /* width: 100%;
   height: 100%;
   object-fit: cover; */
-  border: 3px solid #73AD21;
+  /* border: 1px solid black; */
   max-width: 100vw;
   width: 100vw; 
   max-height: 50vh;
   height: 50vh; 
   grid-area: overlap-zone;
   justify-self: stretch;
-  background-color: aqua;
+  /* background-color: aqua; */
 
   /* position: fixed;
   bottom: 0;
@@ -80,14 +80,14 @@
   margin-left: 60px; */
   /* max-width: 50%;
   width: 50%;*/
-  border-radius: 16px; 
-  border: 3px solid #73AD21;
+  border-radius: 20px; 
+  border: 2px solid black;
   max-width: 20vw;
   width: 20vw; 
   max-height: 20vh;
   height: 20vh; 
   grid-area: overlap-zone;
-  background-color: gray;
+  /* background-color: gray; */
   /* grid-area: primary-video / secondary-video; */
 }
 
@@ -102,12 +102,50 @@
 
 #header{
   color: red;
+  max-height: 2vh;
+  height: 2vh;
 }
 
 #text-input{
   color: red;
+  max-height: 2vh;
+  height: 2vh;
+}
+
+#buttonHolder {
+  margin: 1vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-height: 5vh;
+  height: 5vh; 
+}
+
+#buttonStop{
+  color: white;
+  justify-self: stretch;
+  width: 100px;
+  justify-self: center;
+  background-color: red;
+  border-radius: 5px;
+  border: none;
+
+  /* max-height: 100px;
+  height: 100px;  */
 }
 
 #button{
-  color: red;
+  color: white;
+  width: 150px;
+  justify-self: center;
+  background-color: #4CAF50;
+  border-radius: 5px;
+  border: none;
+  /* max-height: 10vh;
+  height: 10vh;  */
+}
+
+#control-holder{
+  background-color: blueviolet;
+  max-height: 40vh;
+  height: 40vh; 
 }
