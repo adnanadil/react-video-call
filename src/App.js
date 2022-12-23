@@ -59,7 +59,7 @@ function App() {
         {/* </div> */}
         {/* <div id = {"secondary-video-container"}> */}
           {/* <video ref={remoteVideoRef} id = {"secondary-video"} playsInline/> */}
-          <video ref={currentUserVideoRef} id = {"secondary-video"} playsInline/>
+          <video ref={currentUserVideoRef} muted id = {"secondary-video"} playsInline/>
         {/* </div> */}
       </div>
       <div id = "control-container">
