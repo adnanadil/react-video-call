@@ -16,12 +16,6 @@ function App() {
       setPeerId(id)
     });
 
-    // if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
-    //   console.log("Let's get this party started")
-    // }else {
-      
-    // }
-
     peer.on('call', (call) => {
       var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.mediaDevices;
 
@@ -58,14 +52,20 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Current user id is: {peerId}</h1>
-      <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
-      <button onClick={() => call(remotePeerIdValue)}>Call</button>
-      <div>
-        <video ref={currentUserVideoRef} playsInline/>
+      <div id= "video-container">
+        {/* <div id = {"primary-video-container"}> */}
+          {/* <video ref={currentUserVideoRef} id = {"primary-video"} playsInline/> */}
+          <video ref={remoteVideoRef} id = {"primary-video"} playsInline/>
+        {/* </div> */}
+        {/* <div id = {"secondary-video-container"}> */}
+          {/* <video ref={remoteVideoRef} id = {"secondary-video"} playsInline/> */}
+          <video ref={currentUserVideoRef} id = {"secondary-video"} playsInline/>
+        {/* </div> */}
       </div>
-      <div>
-        <video ref={remoteVideoRef} playsInline/>
+      <div id = "control-container">
+        <text id='header'>Current user id is: {peerId}</text>
+        <input id='text-input'type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
+        <button id='button'onClick={() => call(remotePeerIdValue)}>Call</button>
       </div>
     </div>
   );
