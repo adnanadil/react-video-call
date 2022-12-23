@@ -145,7 +145,33 @@
 }
 
 #control-holder{
-  background-color: blueviolet;
+  display: grid;
+  /* grid-template-columns: auto; */
+  grid-template-rows: auto;
+  grid-template-areas: "r0c0 r0c1 r0c2"
+                       "r1c0 r1c1 r1c2"
+                       "r2c0 r2c1 r2c2";
+  /* background-color: blueviolet; */
   max-height: 40vh;
   height: 40vh; 
+}
+
+#button-up{
+  grid-area: r0c1;
+}
+
+#button-stop{
+  grid-area: r1c1;
+}
+
+#button-down{
+  grid-area: r2c1;
+}
+
+#button-left{
+  grid-area: r1c0;
+}
+
+#button-right{
+  grid-area: r1c2;
 }

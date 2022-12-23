@@ -95,7 +95,11 @@ function MainPage() {
           onChange={(e) => setRemotePeerIdValue(e.target.value)}
         />
         <div id = "control-holder">
-          Control
+          <button id="button-up">UP</button>
+          <button id="button-stop">Stop</button>
+          <button id="button-down">Down</button>
+          <button id="button-left">Left</button>
+          <button id="button-right">Right</button>
         </div>
       </div>
     </div>
