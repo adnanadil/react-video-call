@@ -87,7 +87,7 @@ function MainPage() {
           </button>
           <button onClick={moveBack} id = "buttonStop">End</button>
         </div>
-        <text id="header">Current user id is: {peerId}</text>
+        <text id="header">Current user ID is: {peerId}</text>
         <input
           id="text-input"
           type="text"
