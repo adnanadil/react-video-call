@@ -108,6 +108,9 @@ function MainPage() {
       });
       if (robotAvailable) {
         window.location.reload();
+        await updateDoc(docRef, {
+          endPressed: true,
+        });
       } else {
         call(remotePeerIdValue);
         setStopButtonPressed(false)
