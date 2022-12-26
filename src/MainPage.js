@@ -98,11 +98,7 @@ function MainPage() {
         {/* </div> */}
         {/* <div id = {"secondary-video-container"}> */}
         {/* <video ref={remoteVideoRef} id = {"secondary-video"} playsInline/> */}
-        <video
-          ref={currentUserVideoRef}
-          muted
-          id={"secondary-video"}
-          playsInline
+        <video ref={currentUserVideoRef} muted id={"secondary-video"} playsInline
         />
         {/* </div> */}
       </div>
