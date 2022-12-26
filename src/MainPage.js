@@ -1,17 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
-import { updateDoc, doc } from "firebase/firestore";
+import { onSnapshot, updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "./utils.js";
 import "./MainPage.css";
 import { useNavigate } from "react-router-dom";
+import { async } from "@firebase/util";
 
 function MainPage() {
   const [peerId, setPeerId] = useState("");
-  const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
+  const [remotePeerIdValue, setRemotePeerIdValue] = useState("UTB");
+  const [connectButtonPressed, setconnectButtonPressed] = useState(false);
+  const [stopButtonPressed, setStopButtonPressed] = useState(false);
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
   const navigate = useNavigate();
+
+  // onSnapshot(doc(db, "robots", "UTB-Tele-Bot"), (doc) => {
+  //   console.log("Current data: ", doc.data().available);
+  //   setrobotStatus(!(doc.data().available))
+  // });
 
   useEffect(() => {
     const peer = new Peer();
@@ -60,15 +68,36 @@ function MainPage() {
     });
   };
 
+  var getStatusOfBot = async () => {
+    const docRef = doc(db, "robots", "UTB-Tele-Bot");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      setconnectButtonPressed(false)
+      if (docSnap.data().available) {
+        updateRobotStatusAsyncFunction(false);
+      } else {
+        alert("UTB Tele Bot is in use !!");
+      }
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+      alert("Error checking status !! Please Try Again");
+      setconnectButtonPressed(true)
+    }
+  };
+
   var makeCall = () => {
-    // updateRobotStatusAsyncFunction(false);
-    call(remotePeerIdValue);
+    getStatusOfBot();
+    setconnectButtonPressed(true)
   };
 
   var endCall = () => {
     // navigate("/", { replace: true });
-    // updateRobotStatusAsyncFunction(true);
-    window.location.reload();
+    updateRobotStatusAsyncFunction(true);
+    setStopButtonPressed(true)
+    // window.location.reload();
   };
 
   var updateRobotStatusAsyncFunction = async (robotAvailable) => {
@@ -81,6 +110,7 @@ function MainPage() {
         window.location.reload();
       } else {
         call(remotePeerIdValue);
+        setStopButtonPressed(false)
       }
       console.log("Document update with ID: ", docRef.id);
     } catch (e) {
@@ -98,7 +128,11 @@ function MainPage() {
         {/* </div> */}
         {/* <div id = {"secondary-video-container"}> */}
         {/* <video ref={remoteVideoRef} id = {"secondary-video"} playsInline/> */}
-        <video ref={currentUserVideoRef} muted id={"secondary-video"} playsInline
+        <video
+          ref={currentUserVideoRef}
+          muted
+          id={"secondary-video"}
+          playsInline
         />
         {/* </div> */}
       </div>
@@ -106,19 +140,19 @@ function MainPage() {
         <div id="buttonHolder">
           {/* <button id="button" onClick={() => call(remotePeerIdValue)}> */}
           <button id="button" onClick={makeCall}>
-            Connect
+            {connectButtonPressed? "Connecting..." : "Connect"}
           </button>
           <button onClick={endCall} id="buttonStop">
-            End
+            {stopButtonPressed? "Ending..." : "End"}
           </button>
         </div>
-        <text id="header">Current user ID is: {peerId}</text>
+        {/* <text id="header">Current user ID is: {peerId}</text>
         <input
           id="text-input"
           type="text"
           value={remotePeerIdValue}
           onChange={(e) => setRemotePeerIdValue(e.target.value)}
-        />
+        /> */}
         <div id="control-holder">
           <button id="button-up">UP</button>
           <button id="button-stop">Stop</button>
