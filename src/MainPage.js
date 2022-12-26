@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "./utils.js";
 import "./MainPage.css";
 import { useNavigate } from "react-router-dom";
 
@@ -58,9 +60,33 @@ function MainPage() {
     });
   };
 
-  var moveBack = () => {
+  var makeCall = () => {
+    // updateRobotStatusAsyncFunction(false);
+    call(remotePeerIdValue);
+  };
+
+  var endCall = () => {
     // navigate("/", { replace: true });
+    // updateRobotStatusAsyncFunction(true);
     window.location.reload();
+  };
+
+  var updateRobotStatusAsyncFunction = async (robotAvailable) => {
+    try {
+      const docRef = doc(db, "robots", "UTB-Tele-Bot");
+      await updateDoc(docRef, {
+        available: robotAvailable,
+      });
+      if (robotAvailable) {
+        window.location.reload();
+      } else {
+        call(remotePeerIdValue);
+      }
+      console.log("Document update with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error updating document: ", e);
+      alert("Error !! Please Try again");
+    }
   };
 
   return (
@@ -82,10 +108,13 @@ function MainPage() {
       </div>
       <div id="control-container">
         <div id="buttonHolder">
-          <button id="button" onClick={() => call(remotePeerIdValue)}>
+          {/* <button id="button" onClick={() => call(remotePeerIdValue)}> */}
+          <button id="button" onClick={makeCall}>
             Connect
           </button>
-          <button onClick={moveBack} id = "buttonStop">End</button>
+          <button onClick={endCall} id="buttonStop">
+            End
+          </button>
         </div>
         <text id="header">Current user ID is: {peerId}</text>
         <input
@@ -94,7 +123,7 @@ function MainPage() {
           value={remotePeerIdValue}
           onChange={(e) => setRemotePeerIdValue(e.target.value)}
         />
-        <div id = "control-holder">
+        <div id="control-holder">
           <button id="button-up">UP</button>
           <button id="button-stop">Stop</button>
           <button id="button-down">Down</button>

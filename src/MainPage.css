@@ -81,7 +81,7 @@
   /* max-width: 50%;
   width: 50%;*/
   border-radius: 20px; 
-  border: 2px solid black;
+  box-shadow: 1px 1px 25px 0px black;
   max-width: 20vw;
   width: 20vw; 
   max-height: 20vh;
