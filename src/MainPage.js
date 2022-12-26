@@ -4,7 +4,9 @@ import { onSnapshot, updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "./utils.js";
 import "./MainPage.css";
 import { useNavigate } from "react-router-dom";
-import { async } from "@firebase/util";
+// import { async } from "@firebase/util";
+import io from "socket.io-client";
+const socket = io.connect("https://socketio-server-telebot.onrender.com");
 
 function MainPage() {
   const [peerId, setPeerId] = useState("");
@@ -122,6 +124,29 @@ function MainPage() {
     }
   };
 
+  //Socket Functions to control Bot
+
+  
+  const sendMessage_Front = () => {
+    socket.emit("send_message", { message: "F", room: "16" });
+  };
+
+  const sendMessage_Stop = () => {
+    socket.emit("send_message", { message: "S", room: "16" });
+  };
+
+  const sendMessage_Back = () => {
+    socket.emit("send_message", { message: "B", room: "16" });
+  };
+
+  const sendMessage_Left = () => {
+    socket.emit("send_message", { message: "L", room: "16" });
+  };
+
+  const sendMessage_Right = () => {
+    socket.emit("send_message", { message: "R", room: "16" });
+  };
+
   return (
     <div className="App">
       <div id="video-container">
@@ -157,11 +182,11 @@ function MainPage() {
           onChange={(e) => setRemotePeerIdValue(e.target.value)}
         /> */}
         <div id="control-holder">
-          <button id="button-up">UP</button>
-          <button id="button-stop">Stop</button>
-          <button id="button-down">Down</button>
-          <button id="button-left">Left</button>
-          <button id="button-right">Right</button>
+          <button id="button-up" onClick={sendMessage_Front}>Front</button>
+          <button id="button-stop" onClick={sendMessage_Stop}>Stop</button>
+          <button id="button-down" onClick={sendMessage_Back}>Back</button>
+          <button id="button-left" onClick={sendMessage_Left}>Left</button>
+          <button id="button-right" onClick={sendMessage_Right}>Right</button>
         </div>
       </div>
     </div>
