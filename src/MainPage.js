@@ -6,7 +6,9 @@ import "./MainPage.css";
 import { useNavigate } from "react-router-dom";
 // import { async } from "@firebase/util";
 import io from "socket.io-client";
-const socket = io.connect("https://socketio-server-telebot.onrender.com");
+const socket = io.connect("socket-io-server-utb-tele-bot.herokuapp.com");
+// const socket = io.connect("http://localhost:3001");
+
 
 function MainPage() {
   const [peerId, setPeerId] = useState("");
