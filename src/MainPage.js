@@ -9,16 +9,21 @@ import io from "socket.io-client";
 const socket = io.connect("socket-io-server-utb-tele-bot.herokuapp.com");
 // const socket = io.connect("http://localhost:3001");
 
-
 function MainPage() {
   const [peerId, setPeerId] = useState("");
   const [remotePeerIdValue, setRemotePeerIdValue] = useState("UTB");
   const [connectButtonPressed, setconnectButtonPressed] = useState(false);
   const [stopButtonPressed, setStopButtonPressed] = useState(false);
+  const [currentPeer, setCurrentPeer] = useState([]);
+  // const [screenStream, setScreenStream] = useState([]);
+  // const [screenSharing, setScreenSharing] = useState(false);
+  const [localStream, setLocalStream] = useState([]);
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
+  // const currentPeer = useRef(null);
   const navigate = useNavigate();
+
 
   // onSnapshot(doc(db, "robots", "UTB-Tele-Bot"), (doc) => {
   //   console.log("Current data: ", doc.data().available);
@@ -54,23 +59,84 @@ function MainPage() {
   }, []);
 
   const call = (remotePeerId) => {
+    // console.log("HEllo there this is called")
+
     var getUserMedia =
       navigator.getUserMedia ||
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
 
     getUserMedia({ video: true, audio: true }, (mediaStream) => {
+      setLocalStream(mediaStream)
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
 
       const call = peerInstance.current.call(remotePeerId, mediaStream);
+      // I added
+      setCurrentPeer(call)
 
       call.on("stream", (remoteStream) => {
         remoteVideoRef.current.srcObject = remoteStream;
         remoteVideoRef.current.play();
       });
     });
+
+    // navigator.mediaDevices.getDisplayMedia({ video: true }).then((mediaStream) => {
+    //   currentUserVideoRef.current.srcObject = mediaStream;
+    //   currentUserVideoRef.current.play();
+
+    //   const call = peerInstance.current.call(remotePeerId, mediaStream);
+
+    //   call.on("stream", (remoteStream) => {
+    //     remoteVideoRef.current.srcObject = remoteStream;
+    //     remoteVideoRef.current.play();
+    //   });
+    // });
   };
+
+  var screenStream;
+  var screenSharing = false
+  
+  function startScreenShare() {
+    if (screenSharing) {
+      stopScreenSharing();
+    }
+    navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+      screenStream = stream;
+      let videoTrack = screenStream.getVideoTracks()[0];
+      // let videoTrack = stream.getVideoTracks()[0];
+      videoTrack.onended = () => {
+        stopScreenSharing();
+      };
+      if (peerInstance) {
+        let sender = currentPeer.peerConnection.getSenders().find(function (s) {
+          return s.track.kind == videoTrack.kind;
+        });
+        screenSharing = true;
+        sender.replaceTrack(videoTrack);
+      }
+      console.log(screenStream);
+      // console.log(stream);
+    });
+  }
+
+
+  function stopScreenSharing() {
+    console.log(`We are running this ${screenSharing}`)
+    if (!screenSharing) return;
+    console.log(`We are running this`)
+    let videoTrack = localStream.getVideoTracks()[0];
+    if (peerInstance) {
+      let sender = currentPeer.peerConnection.getSenders().find(function (s) {
+        return s.track.kind == videoTrack.kind;
+      });
+      sender.replaceTrack(videoTrack);
+    }
+    screenStream.getTracks().forEach(function (track) {
+      track.stop();
+    });
+    screenSharing = false;
+  }
 
   var getStatusOfBot = async () => {
     const docRef = doc(db, "robots", "UTB-Tele-Bot");
@@ -78,7 +144,7 @@ function MainPage() {
 
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
-      setconnectButtonPressed(false)
+      setconnectButtonPressed(false);
       if (docSnap.data().available) {
         updateRobotStatusAsyncFunction(false);
       } else {
@@ -88,19 +154,19 @@ function MainPage() {
       // doc.data() will be undefined in this case
       console.log("No such document!");
       alert("Error checking status !! Please Try Again");
-      setconnectButtonPressed(true)
+      setconnectButtonPressed(true);
     }
   };
 
   var makeCall = () => {
     getStatusOfBot();
-    setconnectButtonPressed(true)
+    setconnectButtonPressed(true);
   };
 
   var endCall = () => {
     // navigate("/", { replace: true });
     updateRobotStatusAsyncFunction(true);
-    setStopButtonPressed(true)
+    setStopButtonPressed(true);
     // window.location.reload();
   };
 
@@ -117,7 +183,7 @@ function MainPage() {
         });
       } else {
         call(remotePeerIdValue);
-        setStopButtonPressed(false)
+        setStopButtonPressed(false);
       }
       console.log("Document update with ID: ", docRef.id);
     } catch (e) {
@@ -128,9 +194,9 @@ function MainPage() {
 
   //Socket Functions to control Bot
 
-  
   const sendMessage_Front = () => {
     socket.emit("send_message", { message: "F", room: "16" });
+    startScreenShare()
   };
 
   const sendMessage_Stop = () => {
@@ -170,10 +236,10 @@ function MainPage() {
         <div id="buttonHolder">
           {/* <button id="button" onClick={() => call(remotePeerIdValue)}> */}
           <button id="button" onClick={makeCall}>
-            {connectButtonPressed? "Connecting..." : "Connect"}
+            {connectButtonPressed ? "Connecting..." : "Connect"}
           </button>
           <button onClick={endCall} id="buttonStop">
-            {stopButtonPressed? "Ending..." : "End"}
+            {stopButtonPressed ? "Ending..." : "End"}
           </button>
         </div>
         {/* <text id="header">Current user ID is: {peerId}</text>
@@ -184,11 +250,21 @@ function MainPage() {
           onChange={(e) => setRemotePeerIdValue(e.target.value)}
         /> */}
         <div id="control-holder">
-          <button id="button-up" onClick={sendMessage_Front}>Front</button>
-          <button id="button-stop" onClick={sendMessage_Stop}>Stop</button>
-          <button id="button-down" onClick={sendMessage_Back}>Back</button>
-          <button id="button-left" onClick={sendMessage_Left}>Left</button>
-          <button id="button-right" onClick={sendMessage_Right}>Right</button>
+          <button id="button-up" onClick={sendMessage_Front}>
+            Front
+          </button>
+          <button id="button-stop" onClick={sendMessage_Stop}>
+            Stop
+          </button>
+          <button id="button-down" onClick={sendMessage_Back}>
+            Back
+          </button>
+          <button id="button-left" onClick={sendMessage_Left}>
+            Left
+          </button>
+          <button id="button-right" onClick={sendMessage_Right}>
+            Right
+          </button>
         </div>
       </div>
     </div>
