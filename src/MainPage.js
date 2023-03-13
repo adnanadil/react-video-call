@@ -197,7 +197,7 @@ function MainPage() {
 
   const sendMessage_Front = () => {
     socket.emit("send_message", { message: "F", room: "16" });
-    startScreenShare()
+    // startScreenShare()
   };
 
   const sendMessage_Stop = () => {
@@ -267,6 +267,9 @@ function MainPage() {
             Right
           </button>
         </div>
+        <button id="screen-share-button" onClick={startScreenShare}>
+            Share Screen
+        </button>
       </div>
     </div>
   );

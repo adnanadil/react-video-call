@@ -144,6 +144,12 @@
   height: 10vh;  */
 }
 
+#screen-share-button{
+  /* width: 50px; */
+  height: 50px;
+  margin: 10px;
+}
+
 #control-holder{
   display: grid;
   /* grid-template-columns: auto; */
