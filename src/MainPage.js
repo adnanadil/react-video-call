@@ -31,6 +31,7 @@ function MainPage() {
   // });
 
   useEffect(() => {
+    socket.emit("join_room", "16");
     const peer = new Peer();
 
     peer.on("open", (id) => {
