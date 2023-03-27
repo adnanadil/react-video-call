@@ -6,6 +6,9 @@ import "./MainPage.css";
 import { useNavigate } from "react-router-dom";
 // import { async } from "@firebase/util";
 import io from "socket.io-client";
+
+import { isMobile } from "react-device-detect";
+
 const socket = io.connect("socket-io-server-utb-tele-bot.herokuapp.com");
 // const socket = io.connect("http://localhost:3001");
 
@@ -18,12 +21,12 @@ function MainPage() {
   // const [screenStream, setScreenStream] = useState([]);
   // const [screenSharing, setScreenSharing] = useState(false);
   const [localStream, setLocalStream] = useState([]);
+  const [canUserobot, setCanUseRobot] = useState(false);
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
   // const currentPeer = useRef(null);
   const navigate = useNavigate();
-
 
   // onSnapshot(doc(db, "robots", "UTB-Tele-Bot"), (doc) => {
   //   console.log("Current data: ", doc.data().available);
@@ -68,13 +71,13 @@ function MainPage() {
       navigator.mozGetUserMedia;
 
     getUserMedia({ video: true, audio: true }, (mediaStream) => {
-      setLocalStream(mediaStream)
+      setLocalStream(mediaStream);
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
 
       const call = peerInstance.current.call(remotePeerId, mediaStream);
       // I added
-      setCurrentPeer(call)
+      setCurrentPeer(call);
 
       call.on("stream", (remoteStream) => {
         remoteVideoRef.current.srcObject = remoteStream;
@@ -96,36 +99,46 @@ function MainPage() {
   };
 
   var screenStream;
-  var screenSharing = false
-  
+  var screenSharing = false;
+
   function startScreenShare() {
-    if (screenSharing) {
-      stopScreenSharing();
-    }
-    navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
-      screenStream = stream;
-      let videoTrack = screenStream.getVideoTracks()[0];
-      // let videoTrack = stream.getVideoTracks()[0];
-      videoTrack.onended = () => {
-        stopScreenSharing();
-      };
-      if (peerInstance) {
-        let sender = currentPeer.peerConnection.getSenders().find(function (s) {
-          return s.track.kind == videoTrack.kind;
-        });
-        screenSharing = true;
-        sender.replaceTrack(videoTrack);
+    if (canUserobot) {
+      if (isMobile) {
+        alert(
+          `Screen Sharing can be accessed using a laptop or a desktop computer`
+        );
       }
-      console.log(screenStream);
-      // console.log(stream);
-    });
+      if (screenSharing) {
+        stopScreenSharing();
+      }
+      navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+        screenStream = stream;
+        let videoTrack = screenStream.getVideoTracks()[0];
+        // let videoTrack = stream.getVideoTracks()[0];
+        videoTrack.onended = () => {
+          stopScreenSharing();
+        };
+        if (peerInstance) {
+          let sender = currentPeer.peerConnection
+            .getSenders()
+            .find(function (s) {
+              return s.track.kind == videoTrack.kind;
+            });
+          screenSharing = true;
+          sender.replaceTrack(videoTrack);
+        }
+        console.log(screenStream);
+        // console.log(stream);
+      });
+    } else {
+      alert("Please connect to the robot");
+    }
   }
 
-
   function stopScreenSharing() {
-    console.log(`We are running this ${screenSharing}`)
+    console.log(`We are running this ${screenSharing}`);
     if (!screenSharing) return;
-    console.log(`We are running this`)
+    console.log(`We are running this`);
     let videoTrack = localStream.getVideoTracks()[0];
     if (peerInstance) {
       let sender = currentPeer.peerConnection.getSenders().find(function (s) {
@@ -148,8 +161,10 @@ function MainPage() {
       setconnectButtonPressed(false);
       if (docSnap.data().available) {
         updateRobotStatusAsyncFunction(false);
+        setCanUseRobot(true);
       } else {
         alert("UTB Tele Bot is in use !!");
+        setCanUseRobot(false);
       }
     } else {
       // doc.data() will be undefined in this case
@@ -196,24 +211,44 @@ function MainPage() {
   //Socket Functions to control Bot
 
   const sendMessage_Front = () => {
-    socket.emit("send_message", { message: "F", room: "16" });
+    if (canUserobot) {
+      socket.emit("send_message", { message: "F", room: "16" });
+    } else {
+      alert("Please connect to the robot");
+    }
     // startScreenShare()
   };
 
   const sendMessage_Stop = () => {
-    socket.emit("send_message", { message: "S", room: "16" });
+    if (canUserobot) {
+      socket.emit("send_message", { message: "S", room: "16" });
+    } else {
+      alert("Please connect to the robot");
+    }
   };
 
   const sendMessage_Back = () => {
-    socket.emit("send_message", { message: "B", room: "16" });
+    if (canUserobot) {
+      socket.emit("send_message", { message: "B", room: "16" });
+    } else {
+      alert("Please connect to the robot");
+    }
   };
 
   const sendMessage_Left = () => {
-    socket.emit("send_message", { message: "L", room: "16" });
+    if (canUserobot) {
+      socket.emit("send_message", { message: "L", room: "16" });
+    } else {
+      alert("Please connect to the robot");
+    }
   };
 
   const sendMessage_Right = () => {
-    socket.emit("send_message", { message: "R", room: "16" });
+    if (canUserobot) {
+      socket.emit("send_message", { message: "R", room: "16" });
+    } else {
+      alert("Please connect to the robot");
+    }
   };
 
   return (
@@ -268,7 +303,7 @@ function MainPage() {
           </button>
         </div>
         <button id="screen-share-button" onClick={startScreenShare}>
-            Share Screen
+          Share Screen
         </button>
       </div>
     </div>
