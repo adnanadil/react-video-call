@@ -27,6 +27,7 @@ function MainPage() {
   const peerInstance = useRef(null);
   // const currentPeer = useRef(null);
   const navigate = useNavigate();
+  const userRobot = false;
 
   // onSnapshot(doc(db, "robots", "UTB-Tele-Bot"), (doc) => {
   //   console.log("Current data: ", doc.data().available);
@@ -60,7 +61,33 @@ function MainPage() {
     });
 
     peerInstance.current = peer;
+    // document.addEventListener('keydown', handleKeyDown, true)
   }, []);
+
+  const handleKeyDown = (e) => {
+    console.log(`This is pressed: ${e.key}`)
+    console.log(`This is pressed: ${canUserobot}`)
+    if (e.key === "ArrowUp"){
+      // move straight
+      sendMessage_Front()
+    }
+    if (e.key === "ArrowDown"){
+      // move back
+      sendMessage_Back()
+    }
+    if (e.key === "ArrowRight"){
+      // move right
+      sendMessage_Right()
+    }
+    if (e.key === "ArrowLeft"){
+      // move left
+      sendMessage_Left()
+    }
+    if (e.key === "Shift"){
+      // move stop
+      sendMessage_Stop()
+    }
+  }
 
   const call = (remotePeerId) => {
     // console.log("HEllo there this is called")
@@ -162,6 +189,7 @@ function MainPage() {
       if (docSnap.data().available) {
         updateRobotStatusAsyncFunction(false);
         setCanUseRobot(true);
+        // userRobot = true
       } else {
         alert("UTB Tele Bot is in use !!");
         setCanUseRobot(false);
@@ -252,7 +280,7 @@ function MainPage() {
   };
 
   return (
-    <div className="App">
+    <div className="App" onKeyDown={handleKeyDown}>
       <div id="video-container">
         {/* <div id = {"primary-video-container"}> */}
         {/* <video ref={currentUserVideoRef} id = {"primary-video"} playsInline/> */}
